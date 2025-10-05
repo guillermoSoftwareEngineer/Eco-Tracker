@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Eco-Tracker</title>
+  <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600&family=Poppins:wght@600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header class="header">
+    <div class="logo">
+      <img src="logo.png" alt="Eco-Tracker Logo" class="logo-icon">
+      <h1>Eco-Tracker</h1>
+    </div>
+    <p class="subtitle">Gestión inteligente de residuos reciclables</p>
+  </header>
+
+  <main class="container">
+    <!-- Inicio de sesión -->
+    <section class="card">
+      <h2>Inicio de Sesión</h2>
+      <form id="loginForm" class="form">
+        <label for="usuario">Nombre del usuario</label>
+        <input type="text" id="usuario" placeholder="Ej: Guillermo" required>
+        <button type="submit" class="btn-primary">Entrar</button>
+      </form>
+      <p id="bienvenida" class="welcome"></p>
+    </section>
+
+    <!-- Programar recolección -->
+    <section class="card">
+      <h2>Programar Recolección</h2>
+      <form id="residuoForm" class="form">
+        <label for="tipo">Tipo de residuo</label>
+        <select id="tipo" required>
+          <option value="">Seleccionar</option>
+          <option value="Plástico">Plástico</option>
+          <option value="Vidrio">Vidrio</option>
+          <option value="Papel">Papel</option>
+          <option value="Metal">Metal</option>
+        </select>
+
+        <label for="cantidad">Cantidad (kg)</label>
+        <input type="number" id="cantidad" min="0.1" step="0.1" required>
+
+        <label for="fecha">Fecha de recolección</label>
+        <input type="date" id="fecha" required>
+
+        <label for="hora">Hora de recolección</label>
+        <input type="time" id="hora" required>
+
+        <button type="submit" class="btn-primary">Programar ♻️</button>
+      </form>
+    </section>
+
+    <!-- Lista de recolecciones -->
+    <section class="card">
+      <h2>Recolecciones Programadas</h2>
+      <ul id="residuosList" class="list"></ul>
+      <p id="totalPuntos" class="points"></p>
+    </section>
+  </main>
+
+  <!-- Limitaciones técnicas -->
+  <section class="card limitaciones">
+    <h3>Limitaciones Técnicas</h3>
+    <ul>
+      <li>El sistema usa <strong>almacenamiento local (LocalStorage)</strong> cuando no hay conexión a Firestore.</li>
+      <li>Las credenciales de usuario se validan de forma simulada (no hay servidor real).</li>
+      <li>El envío de correos solo funciona si se activa un backend con Firebase Functions.</li>
+      <li>El agendamiento se guarda localmente y no se sincroniza entre dispositivos.</li>
+      <li>Estas limitaciones desaparecen al migrar a un entorno con <strong>API REST o Firebase completo</strong>.</li>
+    </ul>
+  </section>
+
+  <footer class="footer">
+    <p>© 2025 Eco-Tracker | Proyecto académico Politécnico Grancolombiano</p>
+  </footer>
+
+  <!-- ===================== -->
+  <!-- Firebase configuración -->
+  <!-- ===================== -->
+  <script type="module">
+    // Importar SDKs desde CDN (Firebase v10+)
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.1/firebase-app.js";
+    import { getFirestore, collection, addDoc } from "https://www.gstatic.com/firebasejs/10.12.1/firebase-firestore.js";
+
+    // Configuración real del proyecto
+    const firebaseConfig = {
+      apiKey: "AIzaSyBb_YA3bebY4gZrxME6jCHszsQY2VmDCNo",
+      authDomain: "eco-tracker-220dd.firebaseapp.com",
+      projectId: "eco-tracker-220dd",
+      storageBucket: "eco-tracker-220dd.firebasestorage.app",
+      messagingSenderId: "1042392549715",
+      appId: "1:1042392549715:web:46cf043b1dcf43385d79a6",
+      measurementId: "G-B8BFJHV2ZW"
+    };
+
+    // Inicializar Firebase
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+
+    // Función: guardar una recolección en Firestore
+    const form = document.getElementById("residuoForm");
+    form.addEventListener("submit", async (e) => {
+      e.preventDefault();
+
+      const tipo = document.getElementById("tipo").value;
+      const cantidad = parseFloat(document.getElementById("cantidad").value);
+      const fecha = document.getElementById("fecha").value;
+      const hora = document.getElementById("hora").value;
+      const usuario = localStorage.getItem("usuario") || "Invitado";
+
+      try {
+        await addDoc(collection(db, "recolecciones"), {
+          tipo,
+          cantidad,
+          fecha,
+          hora,
+          usuario,
+          createdAt: new Date()
+        });
+
+        alert("✅ Recolección registrada correctamente en Firebase");
+        form.reset();
+      } catch (error) {
+        console.error("Error al guardar:", error);
+        alert("⚠️ No se pudo guardar en Firestore. Revisa la consola.");
+      }
+    });
+  </script>
+
+  <!-- Script principal del sistema -->
+  <script src="script.js"></script>
+</body>
+</html>
