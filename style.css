@@ -33,9 +33,10 @@ body {
   gap: 0.6rem;
 }
 
+/* Línea modificada: Usar font-size para el icono de Font Awesome y color blanco */
 .logo-icon {
-  width: 45px;
-  filter: brightness(0) invert(1);
+  font-size: 45px;
+  color: white;
 }
 
 h1 {
