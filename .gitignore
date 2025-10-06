@@ -1,0 +1,13 @@
+# Dependencias de Node (común en proyectos web)
+/node_modules
+
+# Archivos de entorno con claves secretas
+# CRUCIAL: ESTE ARCHIVO ES IGNORADO Y NO SE SUBE A GIT
+.env
+
+# Directorios de compilación/build
+/dist
+/build
+
+# Archivos de registro
+*.log
